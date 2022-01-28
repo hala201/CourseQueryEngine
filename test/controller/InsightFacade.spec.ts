@@ -21,6 +21,8 @@ describe("InsightFacade", function () {
 	// automatically be loaded in the 'before' hook.
 	const datasetsToLoad: {[key: string]: string} = {
 		courses: "./test/resources/archives/courses.zip",
+		emptyCourses: "./test/resources/archives/empty.zip",
+		mathCourses: "./test/resources/archives/coursesmath.zip"
 	};
 
 	before(function () {
