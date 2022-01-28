@@ -18,12 +18,12 @@ describe("InsightFacade", function () {
 	const persistDir = "./data";
 	const datasetContents = new Map<string, string>();
 
-	// Reference any datasets you've added to test/resources/archives here and they will
+	// Reference any datasets you've added to test/resources/archives here, and they will
 	// automatically be loaded in the 'before' hook.
 	const datasetsToLoad: {[key: string]: string} = {
 		courses: "./test/resources/archives/courses.zip",
 		emptyCourses: "./test/resources/archives/empty.zip",
-		mathCourses: "./test/resources/archives/coursesmath.zip"
+		mathCourses: "./test/resources/archives/coursesMath.zip"
 	};
 
 	before(function () {
@@ -54,7 +54,7 @@ describe("InsightFacade", function () {
 
 		afterEach(function () {
 			// This section resets the data directory (removing any cached data)
-			// This runs after each test, which should make each test independent from the previous one
+			// This runs after each test, which should make each test independent of the previous one
 			console.info(`AfterTest: ${this.currentTest?.title}`);
 			fs.removeSync(persistDir);
 		});
@@ -72,7 +72,7 @@ describe("InsightFacade", function () {
 
 		it("Should add two valid datasets", function () {
 			const id1: string = "courses";
-			const id2: string = "coursesmath";
+			const id2: string = "coursesMath";
 			const content1: string = datasetContents.get(id1) ?? "";
 			const content2: string = datasetContents.get(id2) ?? "";
 			const expected: string[] = [id1, id2];
@@ -151,7 +151,7 @@ describe("InsightFacade", function () {
 
 		it ("Should remove one of multiple dataset", function() {
 			const id1: string = "courses";
-			const id2: string = "coursesmath";
+			const id2: string = "coursesMath";
 			const content1: string = datasetContents.get(id1) ?? "";
 			const content2: string = datasetContents.get(id2) ?? "";
 			return insightFacade.addDataset(id1, content1, InsightDatasetKind.Courses).then(() => {
@@ -192,7 +192,7 @@ describe("InsightFacade", function () {
 
 		it ("Should reject removing a dataset that has not been added", async function() {
 			const id1: string = "courses";
-			const id2: string = "coursesmath";
+			const id2: string = "coursesMath";
 			const content1: string = datasetContents.get(id1) ?? "";
 			const content2: string = datasetContents.get(id2) ?? "";
 			try {
@@ -259,7 +259,7 @@ describe("InsightFacade", function () {
 
 	/*
 	 * This test suite dynamically generates tests from the JSON files in test/queries.
-	 * You should not need to modify it; instead, add additional files to the queries directory.
+	 * You should not need to modify it; instead, add additional files to the queries' directory.
 	 * You can still make tests the normal way, this is just a convenient tool for a majority of queries.
 	 */
 	describe("PerformQuery", () => {
