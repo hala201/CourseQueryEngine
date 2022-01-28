@@ -2,7 +2,8 @@ import {
 	InsightDatasetKind,
 	InsightError,
 	InsightResult,
-	ResultTooLargeError
+	ResultTooLargeError,
+	NotFoundError
 } from "../../src/controller/IInsightFacade";
 import InsightFacade from "../../src/controller/InsightFacade";
 
@@ -57,6 +58,8 @@ describe("InsightFacade", function () {
 			console.info(`AfterTest: ${this.currentTest?.title}`);
 			fs.removeSync(persistDir);
 		});
+
+		// Add datasets
 
 		it("Should add a valid dataset", function () {
 			const id: string = "courses";
@@ -130,6 +133,128 @@ describe("InsightFacade", function () {
 			}
 		});
 
+		// Remove datasets
+
+		it ("Should remove a dataset", function() {
+			const id: string = "courses";
+			const content: string = datasetContents.get(id) ?? "";
+			return insightFacade.addDataset(id, content, InsightDatasetKind.Courses).then(() =>
+				insightFacade.removeDataset(id)).then((removedId) => {
+				expect(removedId).to.equal(id);
+			}).then(() => {
+				return insightFacade.listDatasets();
+			}).then((insightDatasets) => {
+				expect(insightDatasets).to.be.an.instanceof(Array);
+				expect(insightDatasets).to.have.length(0);
+			});
+		});
+
+		it ("Should remove one of multiple dataset", function() {
+			const id1: string = "courses";
+			const id2: string = "coursesmath";
+			const content1: string = datasetContents.get(id1) ?? "";
+			const content2: string = datasetContents.get(id2) ?? "";
+			return insightFacade.addDataset(id1, content1, InsightDatasetKind.Courses).then(() => {
+				return insightFacade.addDataset(id2, content2, InsightDatasetKind.Courses);
+			}).then(() =>
+				insightFacade.removeDataset(id2)).then((removedId) => {
+				expect(removedId).to.equal(id2);
+			}).then(() => {
+				return insightFacade.listDatasets();
+			}).then((insightDatasets) => {
+				expect(insightDatasets).to.deep.equal([{
+					id:id1,
+					kind: InsightDatasetKind.Courses,
+					numRows: 64612,
+				}]);
+			});
+		});
+
+		it ("Should reject removing an id with only whitespace", async function() {
+			const id: string = "   ";
+			try{
+				await insightFacade.removeDataset(id);
+				expect.fail("Should have rejected!");
+			} catch (err) {
+				expect(err).to.be.instanceof(InsightError);
+			}
+		});
+
+		it ("Should reject removing an id with an underscore", async function() {
+			const id: string = "courses_underscore";
+			try{
+				await insightFacade.removeDataset(id);
+				expect.fail("Should have rejected!");
+			} catch (err) {
+				expect(err).to.be.instanceof(InsightError);
+			}
+		});
+
+		it ("Should reject removing a dataset that has not been added", async function() {
+			const id1: string = "courses";
+			const id2: string = "coursesmath";
+			const content1: string = datasetContents.get(id1) ?? "";
+			const content2: string = datasetContents.get(id2) ?? "";
+			try {
+				await insightFacade.addDataset(id1, content1, InsightDatasetKind.Courses);
+				await insightFacade.addDataset(id2, content2, InsightDatasetKind.Courses);
+				await insightFacade.removeDataset("id-that-does-not-exist");
+				expect.fail("Should have rejected!");
+			} catch (err) {
+				expect(err).to.be.instanceof(NotFoundError);
+			}
+		});
+
+		// List Datasets
+
+		it ("Should list no datasets", function() {
+			return insightFacade.listDatasets().then((insightDatasets) => {
+				expect(insightDatasets).to.be.an.instanceof(Array);
+				expect(insightDatasets).to.have.length(0);
+			});
+		});
+
+		it ("Should list one dataset", function (){
+			const id: string = "courses";
+			const content: string = datasetContents.get(id) ?? "";
+			return insightFacade.addDataset(id, content, InsightDatasetKind.Courses)
+				.then(() => insightFacade.listDatasets())
+				.then((insightDatasets) => {
+					expect(insightDatasets).to.deep.equal([{
+						id:id,
+						kind: InsightDatasetKind.Courses,
+						numRows: 64612,
+					}]);
+				});
+		});
+
+		it("Should list multiple datasets", function(){
+			const id1: string = "courses1";
+			const id2: string = "courses2";
+			const content: string = datasetContents.get(id1) ?? "";
+			return insightFacade.addDataset(id1, content, InsightDatasetKind.Courses).then(() => {
+				return insightFacade.addDataset(id2, content, InsightDatasetKind.Courses);
+			}).then(() => {
+				return insightFacade.listDatasets();
+			}).then((insightDatasets) => {
+				expect(insightDatasets).to.be.an.instanceOf(Array);
+				expect(insightDatasets).to.have.length(2);
+				const insightDatasetCourses = insightDatasets.find((dataset) => dataset.id === "courses");
+				expect(insightDatasetCourses).to.exist;
+				expect(insightDatasetCourses).to.deep.equal({
+					id:id1,
+					kind: InsightDatasetKind.Courses,
+					numRows: 64612,
+				});
+				const insightDatasetCourses2 = insightDatasets.find((dataset) => dataset.id === "courses-2");
+				expect(insightDatasetCourses2).to.exist;
+				expect(insightDatasetCourses2).to.deep.equal({
+					id:id2,
+					kind: InsightDatasetKind.Courses,
+					numRows: 64612,
+				});
+			});
+		});
 	});
 
 	/*
