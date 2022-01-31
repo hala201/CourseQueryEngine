@@ -7,16 +7,12 @@ export default class IDChecker{
 	}
 
 	private checkUnderscore(id: string) {
-		if (id.indexOf("_") > -1) {
-			return true;
-		}
-		return false;
+		return id.indexOf("_") > -1;
+
 	}
 
 	private checkOnlyWhitespaces(id: string){
-		if (!id.replace(/\s/g, "").length) {
-			return true;
-		}
-		return false;
+		return !id.replace(/\s/g, "").length;
+
 	}
 }

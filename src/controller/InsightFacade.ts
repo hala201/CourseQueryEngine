@@ -1,11 +1,4 @@
-import {
-	IInsightFacade,
-	InsightDataset,
-	InsightDatasetKind,
-	InsightError,
-	InsightResult,
-	NotFoundError
-} from "./IInsightFacade";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult} from "./IInsightFacade";
 import IDChecker from "./IDChecker";
 
 /**
@@ -23,9 +16,20 @@ export default class InsightFacade implements IInsightFacade {
 		const idChecker = new IDChecker();
 		const improperID: boolean = idChecker.checkID(id);
 		if (improperID) {
-			throw new InsightError("Invalid ID!");
+			return Promise.reject(new InsightError("Invalid ID"));
 		}
 
+		// Parse content
+		if (kind === InsightDatasetKind.Courses){
+			// do work
+		} else if (kind === InsightDatasetKind.Rooms) {
+			// do work
+		} else {
+			// Should not get here
+			return Promise.reject(new InsightError("Invalid Kind"));
+		}
+
+		// Add dataset to
 		return Promise.reject("Not fully implemented.");
 	}
 
