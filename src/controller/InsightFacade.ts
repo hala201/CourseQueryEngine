@@ -6,6 +6,7 @@ import {
 	InsightResult,
 	NotFoundError
 } from "./IInsightFacade";
+import IDChecker from "./IDChecker";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -18,7 +19,14 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-		return Promise.reject("Not implemented.");
+		// Check for valid id
+		const idChecker = new IDChecker();
+		const improperID: boolean = idChecker.checkID(id);
+		if (improperID) {
+			throw new InsightError("Invalid ID!");
+		}
+
+		return Promise.reject("Not fully implemented.");
 	}
 
 	public removeDataset(id: string): Promise<string> {
