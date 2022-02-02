@@ -1,5 +1,6 @@
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult} from "./IInsightFacade";
 import IDChecker from "./IDChecker";
+import ZipLoader from "./ZipLoader";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -20,6 +21,10 @@ export default class InsightFacade implements IInsightFacade {
 		}
 
 		// Parse content
+		const zipLoader = new ZipLoader();
+		const data = zipLoader.loadDataset(content);
+
+
 		if (kind === InsightDatasetKind.Courses){
 			// do work
 		} else if (kind === InsightDatasetKind.Rooms) {
