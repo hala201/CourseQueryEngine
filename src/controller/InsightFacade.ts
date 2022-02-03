@@ -12,7 +12,8 @@ export default class InsightFacade implements IInsightFacade {
 		console.log("InsightFacadeImpl::init()");
 	}
 
-	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+
 		// Check for valid id
 		const idChecker = new IDChecker();
 		const improperID: boolean = idChecker.checkID(id);
@@ -22,10 +23,11 @@ export default class InsightFacade implements IInsightFacade {
 
 		// Parse content
 		const zipLoader = new ZipLoader();
-		const data = zipLoader.loadDataset(content);
+		const data = await zipLoader.loadDataset(content);
+		console.log(data);
 
 
-		if (kind === InsightDatasetKind.Courses){
+		if (kind === InsightDatasetKind.Courses) {
 			// do work
 		} else if (kind === InsightDatasetKind.Rooms) {
 			// do work
