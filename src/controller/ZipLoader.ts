@@ -59,6 +59,12 @@ export default class ZipLoader{
 					uuid: result.id,
 					year: result.year
 				};
+
+				// Check if any property is undefined
+				if (Object.values(item).some((x) => x === undefined)){
+					continue;
+				}
+
 				itemArray.push(item);
 			}
 
