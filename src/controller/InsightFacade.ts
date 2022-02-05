@@ -1,6 +1,7 @@
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult} from "./IInsightFacade";
 import IDChecker from "./IDChecker";
 import ZipLoader from "./ZipLoader";
+import DataController from "./DataController";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -16,28 +17,37 @@ export default class InsightFacade implements IInsightFacade {
 
 		// Check for valid id
 		const idChecker = new IDChecker();
-		const improperID: boolean = idChecker.checkID(id);
+		const dataController = new DataController();
+
+		const improperID: boolean = idChecker.checkValidID(id);
 		if (improperID) {
 			return Promise.reject(new InsightError("Invalid ID"));
 		}
 
+		const loadedIDs: string[] = dataController.getDatasets();
+		const notUniqueID: boolean = idChecker.checkUniqueID(id, loadedIDs);
+		if (notUniqueID) {
+			return Promise.reject(new InsightError("Dataset with same ID exists"));
+		}
+
+
 		// Parse content
 		const zipLoader = new ZipLoader();
 		const data = await zipLoader.loadDataset(content);
-		console.log(data);
+		if (data.length === 0){
+			return Promise.reject(new InsightError("Empty Dataset"));
+		}
+		// console.log(data);
 
-
-		if (kind === InsightDatasetKind.Courses) {
-			// do work
-		} else if (kind === InsightDatasetKind.Rooms) {
-			// do work
-		} else {
-			// Should not get here
-			return Promise.reject(new InsightError("Invalid Kind"));
+		// Store dataset to disk
+		try{
+			await dataController.saveToDisk(data, id);
+		} catch (err) {
+			return Promise.reject(new InsightError("Error adding dataset"));
 		}
 
-		// Add dataset to
-		return Promise.reject("Not fully implemented.");
+		let addedDatasets = dataController.getDatasets();
+		return Promise.resolve(addedDatasets);
 	}
 
 	public removeDataset(id: string): Promise<string> {

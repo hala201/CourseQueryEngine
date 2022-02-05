@@ -1,5 +1,4 @@
 import JSZip, {JSZipObject} from "jszip";
-import {InsightError} from "./IInsightFacade";
 
 export default class ZipLoader{
 
