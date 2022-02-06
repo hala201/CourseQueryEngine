@@ -1,0 +1,21 @@
+{
+  "title": "referencing multiple data sets query",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_instructor": "robert*"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "test_dept",
+        "courses_id",
+        "courses_avg",
+        "courses_instructor"
+      ],
+      "ORDER": "courses_instructor"
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}

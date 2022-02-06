@@ -1,0 +1,20 @@
+{
+	"title": "SELECT dept, avg WHERE avg > 97",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"courses_avg": 10
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept"
+			],
+			"ORDER": "courses_dept"
+		}
+	},
+	"errorExpected": false,
+	"expected": [{
+		"courses_dept": "arth"
+	}]
+}

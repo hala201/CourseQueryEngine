@@ -1,0 +1,22 @@
+{
+  "title": "Invalid Dataset name_V3 in order",
+  "input": {
+    "WHERE": {
+      "EQ": {
+        "courses_avg": 97
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_uuid",
+        "courses_avg"
+      ],
+      "ORDER": [
+        "undefined_avg"
+      ]
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}
+

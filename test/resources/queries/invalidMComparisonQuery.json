@@ -1,0 +1,19 @@
+{
+  "title": "invalid mcomparison with string query",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "courses_dept": "90"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_avg",
+        "courses_uuid"
+      ],
+      "ORDER": "courses_uuid"
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}
