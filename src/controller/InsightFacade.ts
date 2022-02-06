@@ -83,18 +83,19 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public removeDataset(id: string): Promise<string> {
-		return new Promise((resolve, reject) => {
-			try {
-				let returnedNum = deleteDataSetHelper(id, this.dirPath, this.dataSets, this.dataSetsIDs);
-				if (returnedNum === 404) {
-					return Promise.reject();
-				} else {
-					resolve("remove succeeded");
-				}
-			} catch (e) {
-				return Promise.reject(e);
-			}
-		});
+		// return new Promise((resolve, reject) => {
+		// 	try {
+		// 		let returnedNum = deleteDataSetHelper(id, this.dirPath, this.dataSets, this.dataSetsIDs);
+		// 		if (returnedNum === 404) {
+		// 			return Promise.reject();
+		// 		} else {
+		// 			resolve("remove succeeded");
+		// 		}
+		// 	} catch (e) {
+		// 		return Promise.reject(e);
+		// 	}
+		// });
+		return Promise.reject("Not implemented.");
 	}
 
 	public performQuery(query: unknown): Promise<InsightResult[]> {
