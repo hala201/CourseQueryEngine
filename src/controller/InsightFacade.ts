@@ -1,7 +1,16 @@
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult} from "./IInsightFacade";
+import {
+	IInsightFacade,
+	InsightDataset,
+	InsightDatasetKind,
+	InsightError,
+	InsightResult,
+	ResultTooLargeError
+} from "./IInsightFacade";
 import IDChecker from "./IDChecker";
 import ZipLoader from "./ZipLoader";
 import DataController from "./DataController";
+import {performQueryHelper} from "./queryUtils/queryDataProcessing/PerfomQueryHelpers";
+
 
 /**
  * This is the main programmatic entry point for the project.
@@ -9,8 +18,23 @@ import DataController from "./DataController";
  *
  */
 export default class InsightFacade implements IInsightFacade {
+	private dataSets: Map<string, any>;
+	private dataSetsIDs: string[];
+
 	constructor() {
-		console.log("InsightFacadeImpl::init()");
+		/**
+		 * you might want to check if the data folder contains dataSets then you should load them otherwise dataSet
+		 * contains no datasets
+		 *
+		 * This dataset contains the id for a dataset and the content
+		 */
+		this.dataSets = new Map<string, any>();
+		/**
+		 * REQUIREMENT: The promise should fulfill with a string array,
+		 * containing the ids of all currently added datasets upon a successful add.
+		 * I added this filed, so we can fulfill a promise with this array
+		 */
+		this.dataSetsIDs = [];
 	}
 
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -34,13 +58,13 @@ export default class InsightFacade implements IInsightFacade {
 		// Parse content
 		const zipLoader = new ZipLoader();
 		const data = await zipLoader.loadDataset(content);
-		if (data.length === 0){
+		if (data.length === 0) {
 			return Promise.reject(new InsightError("Empty Dataset"));
 		}
 		// console.log(data);
 
 		// Store dataset to disk
-		try{
+		try {
 			await dataController.saveToDisk(data, id);
 		} catch (err) {
 			return Promise.reject(new InsightError("Error adding dataset"));
@@ -54,8 +78,18 @@ export default class InsightFacade implements IInsightFacade {
 		return Promise.reject("Not implemented.");
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-shadow
 	public performQuery(query: unknown): Promise<InsightResult[]> {
-		return Promise.reject("Not implemented.");
+		let result: InsightResult[] = [];
+		try {
+			result = performQueryHelper(query, this.dataSetsIDs, this.dataSets);
+			if (result.length > 5000) {
+				return Promise.reject(new ResultTooLargeError());
+			}
+		} catch (e) {
+			return Promise.reject(e);
+		}
+		return Promise.resolve(result);
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
