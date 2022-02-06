@@ -1,0 +1,67 @@
+{
+  "title": "valid asterisks_V4 query",
+  "input": {
+    "WHERE": {
+      "OR": [
+        {
+          "AND": [
+            {
+              "GT": {
+                "courses_avg": 98
+              }
+            },
+            {
+              "IS": {
+                "courses_dept": "*apsc"
+              }
+            }
+          ]
+        },
+        {
+          "EQ": {
+            "courses_avg": 99
+          }
+        },
+        {
+          "AND": [
+            {
+              "GT": {
+                "courses_avg": 99
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_uuid",
+        "courses_id"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": false,
+  "expected": [
+    {
+      "courses_dept": "cnps",
+      "courses_avg": 99.19,
+      "courses_uuid": "26777",
+      "courses_id": "574"
+    },
+    {
+      "courses_dept": "math",
+      "courses_avg": 99.78,
+      "courses_uuid": "5374",
+      "courses_id": "527"
+    },
+    {
+      "courses_dept": "math",
+      "courses_avg": 99.78,
+      "courses_uuid": "5373",
+      "courses_id": "527"
+    }
+  ]
+}

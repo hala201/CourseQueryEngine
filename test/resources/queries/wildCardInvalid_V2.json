@@ -1,0 +1,18 @@
+{
+  "title": "invalid asterisks_V2 query",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_dept": "aps*c"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_id"
+      ],
+      "ORDER": "courses_id"
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}

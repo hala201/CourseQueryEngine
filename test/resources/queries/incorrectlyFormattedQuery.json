@@ -1,0 +1,13 @@
+{
+  "title": "incorrectly formatted query",
+  "input": {
+    "WHERE": {
+
+    },
+    "OPTIONS": {
+
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}

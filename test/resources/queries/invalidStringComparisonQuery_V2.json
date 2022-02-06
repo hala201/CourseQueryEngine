@@ -1,0 +1,19 @@
+{
+  "title": "invalid string comparison with asterisk query",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_dept": "cp*sc"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_avg",
+        "courses_uuid"
+      ],
+      "ORDER": "courses_uuid"
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}

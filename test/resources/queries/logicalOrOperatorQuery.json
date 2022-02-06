@@ -1,0 +1,50 @@
+{
+  "title": "logical or operator query",
+  "input": {
+    "WHERE": {
+      "OR": [
+        {
+          "IS": {
+            "courses_uuid": "18672"
+          }
+        },
+        {
+          "GT": {
+            "courses_avg": 99
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_uuid"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": false,
+  "expected": [
+    {
+      "courses_dept": "apsc",
+      "courses_avg": 57.68,
+      "courses_uuid": "18672"
+    },
+    {
+      "courses_dept": "cnps",
+      "courses_avg": 99.19,
+      "courses_uuid": "26777"
+    },
+    {
+      "courses_dept": "math",
+      "courses_avg": 99.78,
+      "courses_uuid": "5374"
+    },
+    {
+      "courses_dept": "math",
+      "courses_avg": 99.78,
+      "courses_uuid": "5373"
+    }
+  ]
+}

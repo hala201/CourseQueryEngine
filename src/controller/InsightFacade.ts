@@ -57,10 +57,15 @@ export default class InsightFacade implements IInsightFacade {
 			return Promise.reject(new InsightError("Dataset with same ID exists"));
 		}
 
-
 		// Parse content
 		const zipLoader = new ZipLoader();
-		const data = await zipLoader.loadDataset(content);
+		let data = [];
+		try {
+			data = await zipLoader.loadDataset(content);
+		} catch {
+			return Promise.reject(new InsightError("Improper Dataset"));
+		}
+
 		if (data.length === 0) {
 			return Promise.reject(new InsightError("Empty Dataset"));
 		}
@@ -78,18 +83,19 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public removeDataset(id: string): Promise<string> {
-		return new Promise((resolve, reject) => {
-			try {
-				let returnedNum = deleteDataSetHelper(id, this.dirPath, this.dataSets, this.dataSetsIDs);
-				if (returnedNum === 404) {
-					return Promise.reject();
-				} else {
-					resolve("remove succeeded");
-				}
-			} catch (e) {
-				return Promise.reject(e);
-			}
-		});
+		// return new Promise((resolve, reject) => {
+		// 	try {
+		// 		let returnedNum = deleteDataSetHelper(id, this.dirPath, this.dataSets, this.dataSetsIDs);
+		// 		if (returnedNum === 404) {
+		// 			return Promise.reject();
+		// 		} else {
+		// 			resolve("remove succeeded");
+		// 		}
+		// 	} catch (e) {
+		// 		return Promise.reject(e);
+		// 	}
+		// });
+		return Promise.reject("Not implemented.");
 	}
 
 	public performQuery(query: unknown): Promise<InsightResult[]> {

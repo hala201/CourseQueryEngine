@@ -1,0 +1,33 @@
+{
+  "title": "valid not query",
+  "input": {
+    "WHERE": {
+      "NOT": {
+        "GT": {
+          "courses_avg": 2
+        }
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": false,
+  "expected": [
+    {
+      "courses_avg": 0
+    },
+    {
+      "courses_avg": 0
+    },
+    {
+      "courses_avg": 0
+    },
+    {
+      "courses_avg": 1
+    }
+  ]
+}

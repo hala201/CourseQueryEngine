@@ -1,4 +1,5 @@
 import JSZip, {JSZipObject} from "jszip";
+import {expect} from "chai";
 
 export default class ZipLoader{
 
@@ -9,7 +10,7 @@ export default class ZipLoader{
 
 		// Calls to JSZip API
 		const zipContent = new JSZip();
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
 			zipContent.loadAsync(content, {base64: true})
 				.then(async (zip) => {
 					// Loads the courses folder
@@ -30,7 +31,11 @@ export default class ZipLoader{
 						}).then((result) => {
 							return resolve(dataset || []);
 						});
+					} else{
+						return reject();
 					}
+				}).catch(() => {
+					return	reject();
 				});
 		});
 	}
@@ -40,33 +45,38 @@ export default class ZipLoader{
 		itemArray = [];
 
 		for (const dataItem of data) {
-			let dataResults = JSON.parse(dataItem).result;
-			for (let result of dataResults){
-				// Based on c1 spec req
-				if (result.Section === "overall"){
-					result.year = "1900";
-				}
-				// Set each item based on the json file
-				let item = {
-					dept: result.Subject,
-					id: result.Course,
-					avg: result.Avg,
-					instructor: result.Professor,
-					title: result.Title,
-					pass: result.Pass,
-					fail: result.Fail,
-					audit: result.Audit,
-					uuid: result.id,
-					year: result.year
-				};
+			try{
+				let dataResults = JSON.parse(dataItem).result;
+				for (let result of dataResults){
+					// Based on c1 spec req
+					if (result.Section === "overall"){
+						result.year = "1900";
+					}
+					// Set each item based on the json file
+					let item = {
+						dept: result.Subject,
+						id: result.Course,
+						avg: result.Avg,
+						instructor: result.Professor,
+						title: result.Title,
+						pass: result.Pass,
+						fail: result.Fail,
+						audit: result.Audit,
+						uuid: result.id,
+						year: result.year
+					};
 
-				// Check if any property is undefined
-				if (Object.values(item).some((x) => x === undefined)){
-					continue;
-				}
+					// Check if any property is undefined
+					if (Object.values(item).some((x) => x === undefined)){
+						continue;
+					}
 
-				itemArray.push(item);
+					itemArray.push(item);
+				}
+			} catch {
+				// Do nothing if JSON.parse returns error
 			}
+
 
 		}
 		return itemArray;

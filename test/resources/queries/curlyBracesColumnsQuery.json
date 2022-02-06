@@ -1,0 +1,16 @@
+{
+  "title": "empty columns array query",
+  "input": {
+    "WHERE": {
+      "EQ": {
+        "courses_avg": 98
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": {},
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}

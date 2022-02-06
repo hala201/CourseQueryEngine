@@ -1,0 +1,20 @@
+{
+  "title": "equal to 105",
+  "input": {
+    "WHERE": {
+      "EQ": {
+        "courses_avg": 102
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_uuid",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": false,
+  "expected": []
+}
+
