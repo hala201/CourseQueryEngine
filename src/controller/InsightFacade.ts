@@ -4,8 +4,14 @@ import {
 	InsightDatasetKind,
 	InsightError,
 	InsightResult,
-	NotFoundError
+	ResultTooLargeError
 } from "./IInsightFacade";
+import IDChecker from "./IDChecker";
+import ZipLoader from "./ZipLoader";
+import DataController from "./DataController";
+import {performQueryHelper} from "./queryUtils/queryDataProcessing/PerfomQueryHelpers";
+import {deleteDataSetHelper} from "./dataSetUtils/removeDataSetHelper";
+
 
 /**
  * This is the main programmatic entry point for the project.
@@ -13,20 +19,90 @@ import {
  *
  */
 export default class InsightFacade implements IInsightFacade {
+	private dataSets: Map<string, any>;
+	private dataSetsIDs: string[];
+	private dirPath: string = __dirname + "/data/";
+
 	constructor() {
-		console.log("InsightFacadeImpl::init()");
+		/**
+		 * you might want to check if the data folder contains dataSets then you should load them otherwise dataSet
+		 * contains no datasets
+		 *
+		 * This dataset contains the id for a dataset and the content
+		 */
+		this.dataSets = new Map<string, any>();
+		/**
+		 * REQUIREMENT: The promise should fulfill with a string array,
+		 * containing the ids of all currently added datasets upon a successful add.
+		 * I added this filed, so we can fulfill a promise with this array
+		 */
+		this.dataSetsIDs = [];
+
 	}
 
-	public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-		return Promise.reject("Not implemented.");
+	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+
+		// Check for valid id
+		const idChecker = new IDChecker();
+		const dataController = new DataController();
+
+		const improperID: boolean = idChecker.checkValidID(id);
+		if (improperID) {
+			return Promise.reject(new InsightError("Invalid ID"));
+		}
+
+		const loadedIDs: string[] = dataController.getDatasets();
+		const notUniqueID: boolean = idChecker.checkUniqueID(id, loadedIDs);
+		if (notUniqueID) {
+			return Promise.reject(new InsightError("Dataset with same ID exists"));
+		}
+
+
+		// Parse content
+		const zipLoader = new ZipLoader();
+		const data = await zipLoader.loadDataset(content);
+		if (data.length === 0) {
+			return Promise.reject(new InsightError("Empty Dataset"));
+		}
+		// console.log(data);
+
+		// Store dataset to disk
+		try {
+			await dataController.saveToDisk(data, id);
+		} catch (err) {
+			return Promise.reject(new InsightError("Error adding dataset"));
+		}
+
+		let addedDatasets = dataController.getDatasets();
+		return Promise.resolve(addedDatasets);
 	}
 
 	public removeDataset(id: string): Promise<string> {
-		return Promise.reject("Not implemented.");
+		return new Promise((resolve, reject) => {
+			try {
+				let returnedNum = deleteDataSetHelper(id, this.dirPath, this.dataSets, this.dataSetsIDs);
+				if (returnedNum === 404) {
+					return Promise.reject();
+				} else {
+					resolve("remove succeeded");
+				}
+			} catch (e) {
+				return Promise.reject(e);
+			}
+		});
 	}
 
 	public performQuery(query: unknown): Promise<InsightResult[]> {
-		return Promise.reject("Not implemented.");
+		let result: InsightResult[] = [];
+		try {
+			result = performQueryHelper(query, this.dataSetsIDs, this.dataSets);
+			if (result.length > 5000) {
+				return Promise.reject(new ResultTooLargeError());
+			}
+		} catch (e) {
+			return Promise.reject(e);
+		}
+		return Promise.resolve(result);
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
