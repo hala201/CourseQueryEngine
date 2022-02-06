@@ -57,7 +57,6 @@ export default class InsightFacade implements IInsightFacade {
 			return Promise.reject(new InsightError("Dataset with same ID exists"));
 		}
 
-
 		// Parse content
 		const zipLoader = new ZipLoader();
 		let data = [];
@@ -68,7 +67,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 
 		if (data.length === 0) {
-			return Promise.reject(new InsightError("Improper Dataset"));
+			return Promise.reject(new InsightError("Empty Dataset"));
 		}
 		// console.log(data);
 

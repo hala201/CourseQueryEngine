@@ -79,7 +79,7 @@ describe("InsightFacade", function () {
 			return insightFacade.addDataset(id1, content1, InsightDatasetKind.Courses).then(() => {
 				return insightFacade.addDataset(id2, content2, InsightDatasetKind.Courses);
 			}).then((result: string[]) => {
-				expect(result).to.deep.equal(expected);
+				expect(new Set(result)).to.deep.equal(new Set(expected));
 			});
 		});
 
