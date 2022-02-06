@@ -10,6 +10,7 @@ import IDChecker from "./IDChecker";
 import ZipLoader from "./ZipLoader";
 import DataController from "./DataController";
 import {performQueryHelper} from "./queryUtils/queryDataProcessing/PerfomQueryHelpers";
+import {deleteDataSetHelper} from "./dataSetUtils/removeDataSetHelper";
 
 
 /**
@@ -20,6 +21,7 @@ import {performQueryHelper} from "./queryUtils/queryDataProcessing/PerfomQueryHe
 export default class InsightFacade implements IInsightFacade {
 	private dataSets: Map<string, any>;
 	private dataSetsIDs: string[];
+	private dirPath: string = __dirname + "/data/";
 
 	constructor() {
 		/**
@@ -35,6 +37,7 @@ export default class InsightFacade implements IInsightFacade {
 		 * I added this filed, so we can fulfill a promise with this array
 		 */
 		this.dataSetsIDs = [];
+
 	}
 
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -75,10 +78,20 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public removeDataset(id: string): Promise<string> {
-		return Promise.reject("Not implemented.");
+		return new Promise((resolve, reject) => {
+			try {
+				let returnedNum = deleteDataSetHelper(id, this.dirPath, this.dataSets, this.dataSetsIDs);
+				if (returnedNum === 404) {
+					return Promise.reject();
+				} else {
+					resolve("remove succeeded");
+				}
+			} catch (e) {
+				return Promise.reject(e);
+			}
+		});
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-shadow
 	public performQuery(query: unknown): Promise<InsightResult[]> {
 		let result: InsightResult[] = [];
 		try {
