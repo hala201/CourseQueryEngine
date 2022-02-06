@@ -1,0 +1,19 @@
+{
+  "title": "order key not in the columns",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "courses_instructor": "robert*"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept"
+      ],
+      "ORDER": "courses_instructor"
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}
+

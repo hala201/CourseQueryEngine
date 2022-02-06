@@ -1,0 +1,20 @@
+{
+  "title": "less than -5",
+  "input": {
+    "WHERE": {
+      "LT": {
+        "courses_avg": -5
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_uuid",
+        "courses_avg"
+      ],
+      "ORDER": "courses_avg"
+    }
+  },
+  "errorExpected": false,
+  "expected": []
+}
+

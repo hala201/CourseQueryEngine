@@ -1,0 +1,20 @@
+{
+	"title": "null type query",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"courses_avg": null
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_avg",
+				null
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+	"errorExpected": true,
+	"expected":"InsightError"
+}

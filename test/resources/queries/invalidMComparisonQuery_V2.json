@@ -1,0 +1,19 @@
+{
+  "title": "invalid mcomparison with mkey that has underscore query",
+  "input": {
+    "WHERE": {
+      "GT": {
+        "_courses_avg": 90
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_avg",
+        "courses_uuid"
+      ],
+      "ORDER": "courses_uuid"
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}

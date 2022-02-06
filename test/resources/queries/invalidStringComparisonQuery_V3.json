@@ -1,0 +1,19 @@
+{
+  "title": "invalid string comparison with underscore in skey query",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "_courses_dept": "cpsc"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_avg",
+        "courses_uuid"
+      ],
+      "ORDER": "courses_uuid"
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}

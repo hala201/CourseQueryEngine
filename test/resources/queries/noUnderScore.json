@@ -1,0 +1,19 @@
+{
+	"title": "no underscore query",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"coursesavg": 99
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"coursesdept",
+				"coursesavg"
+			],
+			"ORDER": "coursesdept"
+		}
+	},
+	"errorExpected": true,
+	"expected": "InsightError"
+}
