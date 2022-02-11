@@ -6,9 +6,9 @@ import {
 	InsightResult,
 	ResultTooLargeError
 } from "./IInsightFacade";
-import IDChecker from "./IDChecker";
-import ZipLoader from "./ZipLoader";
-import DataController from "./DataController";
+import IDChecker from "./dataSetUtils/IDChecker";
+import ZipLoader from "./dataSetUtils/ZipLoader";
+import DataController from "./dataSetUtils/DataController";
 import {performQueryHelper} from "./queryUtils/queryDataProcessing/PerfomQueryHelpers";
 import {deleteDataSetHelper} from "./dataSetUtils/removeDataSetHelper";
 
