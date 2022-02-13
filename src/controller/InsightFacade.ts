@@ -73,12 +73,17 @@ export default class InsightFacade implements IInsightFacade {
 
 		// Store dataset to disk
 		try {
-			await dataController.saveToDisk(data, id);
+			await dataController.saveToDisk(content, data, id);
 		} catch (err) {
 			return Promise.reject(new InsightError("Error adding dataset"));
 		}
-
 		let addedDatasets = dataController.getDatasets();
+		this.dataSetsIDs.push(id);
+		let insightDataSet = {
+			id,
+			data
+		};
+		this.dataSets.set(id, insightDataSet);
 		return Promise.resolve(addedDatasets);
 	}
 
