@@ -3,7 +3,7 @@ import {
 	InsightDataset,
 	InsightDatasetKind,
 	InsightError,
-	InsightResult,
+	InsightResult, NotFoundError,
 	ResultTooLargeError
 } from "./IInsightFacade";
 import IDChecker from "./IDChecker";
@@ -83,18 +83,25 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public removeDataset(id: string): Promise<string> {
-		// return new Promise((resolve, reject) => {
-		// 	try {
-		// 		let returnedNum = deleteDataSetHelper(id, this.dirPath, this.dataSets, this.dataSetsIDs);
-		// 		if (returnedNum === 404) {
-		// 			return Promise.reject();
-		// 		} else {
-		// 			resolve("remove succeeded");
-		// 		}
-		// 	} catch (e) {
-		// 		return Promise.reject(e);
-		// 	}
-		// });
+		// Check for valid id
+		const idChecker = new IDChecker();
+		const dataController = new DataController();
+
+		const improperID: boolean = idChecker.checkValidID(id);
+		if (improperID) {
+			return Promise.reject(new InsightError("Invalid ID"));
+		}
+
+		const loadedIDs: string[] = dataController.getDatasets();
+		const uniqueID: boolean = !idChecker.checkUniqueID(id, loadedIDs);
+		if (uniqueID) {
+			return Promise.reject(new NotFoundError("Dataset with ID is not found"));
+		}
+
+		// Remove dataset from local
+
+		// Remove dataset from disk
+
 		return Promise.reject("Not implemented.");
 	}
 
@@ -114,4 +121,5 @@ export default class InsightFacade implements IInsightFacade {
 	public listDatasets(): Promise<InsightDataset[]> {
 		return Promise.reject("Not implemented.");
 	}
+
 }

@@ -14,7 +14,7 @@ const KEYS: Map<string, string> = new Map<string, string>([
 function getListOfSections(sections: any[]): any[] {
 	let listOfSections: any[] = [];
 	sections.forEach((result) => {
-		result.result.forEach((section: any) => {
+		Object.keys(result).forEach((section: any) => {
 			listOfSections.push(section);
 		});
 	});
