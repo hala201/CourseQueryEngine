@@ -15,10 +15,10 @@ export function performQueryHelper(
 	let id = dataSetsReferencedInQuery(query);
 	let insightResult = dataSets.get(id);
 	if (Object.values(queryObject.WHERE).length === 0) {
-		return insightResult.sections;
+		return insightResult.data;
 	}
-	let processedSectionsList = processListOfSections(insightResult.sections, id);
-	let columnsToProcess = columnsReferencedInQuery(query);
+	let processedSectionsList = processListOfSections(insightResult.data, id);
+//	let columnsToProcess = columnsReferencedInQuery(query);
 	/**
 	 * Todo: This method will then sort the result according to the order if it exists
 	 */

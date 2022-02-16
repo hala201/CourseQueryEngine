@@ -6,9 +6,9 @@ import {
 	InsightResult,
 	ResultTooLargeError
 } from "./IInsightFacade";
-import IDChecker from "./IDChecker";
-import ZipLoader from "./ZipLoader";
-import DataController from "./DataController";
+import IDChecker from "./dataSetUtils/IDChecker";
+import ZipLoader from "./dataSetUtils/ZipLoader";
+import DataController from "./dataSetUtils/DataController";
 import {performQueryHelper} from "./queryUtils/queryDataProcessing/PerfomQueryHelpers";
 import {deleteDataSetHelper} from "./dataSetUtils/removeDataSetHelper";
 
@@ -73,12 +73,17 @@ export default class InsightFacade implements IInsightFacade {
 
 		// Store dataset to disk
 		try {
-			await dataController.saveToDisk(data, id);
+			await dataController.saveToDisk(content, data, id);
 		} catch (err) {
 			return Promise.reject(new InsightError("Error adding dataset"));
 		}
-
 		let addedDatasets = dataController.getDatasets();
+		this.dataSetsIDs.push(id);
+		let insightDataSet = {
+			id,
+			data
+		};
+		this.dataSets.set(id, insightDataSet);
 		return Promise.resolve(addedDatasets);
 	}
 
@@ -112,6 +117,10 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
-		return Promise.reject("Not implemented.");
+	//	return Promise.reject("Not implemented.");
+		let values = Array.from(this.dataSets.values());
+		return new Promise<InsightDataset[]>(function (resolve, reject) {
+			resolve(values);
+		});
 	}
 }

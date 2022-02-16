@@ -67,9 +67,9 @@ export default class ZipLoader{
 					};
 
 					// Check if any property is undefined
-					if (Object.values(item).some((x) => x === undefined)){
-						continue;
-					}
+					// if (Object.values(item).some((x) => x === undefined)){
+					// 	continue;
+					// }
 
 					itemArray.push(item);
 				}
