@@ -54,8 +54,6 @@ export default class DataController{
 			}
 		}
 
-		console.log(onDiskNotLocalIDs);
-
 		return onDiskNotLocalIDs;
 	}
 
