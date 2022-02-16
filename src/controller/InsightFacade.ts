@@ -42,16 +42,25 @@ export default class InsightFacade implements IInsightFacade {
 
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 
-		// Check for valid id
 		const idChecker = new IDChecker();
 		const dataController = new DataController();
 
+		// Check for valid id
 		const improperID: boolean = idChecker.checkValidID(id);
 		if (improperID) {
 			return Promise.reject(new InsightError("Invalid ID"));
 		}
 
 		const loadedIDs: string[] = dataController.getDatasets();
+
+		// Validate disk and local parity
+		let onDiskNotLocalIDs: string[] = dataController.checkLocalDiskParity(this.dataSetsIDs);
+		for (let item in onDiskNotLocalIDs) {
+			this.dataSetsIDs.push(item);
+			let JSONData: object = dataController.parseDiskJSONData(item);
+			this.dataSets.set(id, JSONData);
+		}
+
 		const notUniqueID: boolean = idChecker.checkUniqueID(id, loadedIDs);
 		if (notUniqueID) {
 			return Promise.reject(new InsightError("Dataset with same ID exists"));
@@ -78,6 +87,10 @@ export default class InsightFacade implements IInsightFacade {
 			return Promise.reject(new InsightError("Error adding dataset"));
 		}
 
+		// Store dataset to local
+		this.dataSetsIDs.push(id);
+		this.dataSets.set(id, data);
+
 		let addedDatasets = dataController.getDatasets();
 		return Promise.resolve(addedDatasets);
 	}
@@ -98,11 +111,18 @@ export default class InsightFacade implements IInsightFacade {
 			return Promise.reject(new NotFoundError("Dataset with ID is not found"));
 		}
 
-		// Remove dataset from local
-
 		// Remove dataset from disk
+		try {
+			dataController.removeFromDisk(id);
+		} catch (err){
+			return Promise.reject("Error removing dataset from disk");
+		}
 
-		return Promise.reject("Not implemented.");
+		// Remove dataset from local
+		this.dataSetsIDs = this.dataSetsIDs.filter((string) => string !== id);
+		this.dataSets.delete(id);
+
+		return Promise.resolve(id);
 	}
 
 	public performQuery(query: unknown): Promise<InsightResult[]> {
