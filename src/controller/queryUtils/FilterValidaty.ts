@@ -94,7 +94,7 @@ function mComparator(filterObject: any) {
 	}
 
 	dataSetsReferencedSoFar.add(dataset[0]);
-	return dataSetsReferencedSoFar.size < 2;
+	return dataSetsReferencedSoFar.size < 1;
 }
 
 function negationFilter(filterObject: any) {

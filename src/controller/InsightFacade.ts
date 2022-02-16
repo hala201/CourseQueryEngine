@@ -6,9 +6,9 @@ import {
 	InsightResult, NotFoundError,
 	ResultTooLargeError
 } from "./IInsightFacade";
-import IDChecker from "./IDChecker";
-import ZipLoader from "./ZipLoader";
-import DataController from "./DataController";
+import IDChecker from "./dataSetUtils/IDChecker";
+import ZipLoader from "./dataSetUtils/ZipLoader";
+import DataController from "./dataSetUtils/DataController";
 import {performQueryHelper} from "./queryUtils/queryDataProcessing/PerfomQueryHelpers";
 import {deleteDataSetHelper} from "./dataSetUtils/removeDataSetHelper";
 
@@ -56,9 +56,8 @@ export default class InsightFacade implements IInsightFacade {
 		// Validate disk and local parity
 		let onDiskNotLocalIDs: string[] = dataController.checkLocalDiskParity(this.dataSetsIDs);
 		for (let item in onDiskNotLocalIDs) {
-			this.dataSetsIDs.push(item);
 			let JSONData: object = dataController.parseDiskJSONData(item);
-			this.dataSets.set(id, JSONData);
+			this.saveToLocal(id,JSONData);
 		}
 
 		const notUniqueID: boolean = idChecker.checkUniqueID(id, loadedIDs);
@@ -78,20 +77,17 @@ export default class InsightFacade implements IInsightFacade {
 		if (data.length === 0) {
 			return Promise.reject(new InsightError("Empty Dataset"));
 		}
-		// console.log(data);
 
 		// Store dataset to disk
 		try {
-			await dataController.saveToDisk(data, id);
+			await dataController.saveToDisk(content, data, id);
 		} catch (err) {
 			return Promise.reject(new InsightError("Error adding dataset"));
 		}
 
 		// Store dataset to local
-		this.dataSetsIDs.push(id);
-		this.dataSets.set(id, data);
-
 		let addedDatasets = dataController.getDatasets();
+		this.saveToLocal(id,data);
 		return Promise.resolve(addedDatasets);
 	}
 
@@ -119,8 +115,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 
 		// Remove dataset from local
-		this.dataSetsIDs = this.dataSetsIDs.filter((string) => string !== id);
-		this.dataSets.delete(id);
+		this.removeFromLocal(id);
 
 		return Promise.resolve(id);
 	}
@@ -139,7 +134,25 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
-		return Promise.reject("Not implemented.");
+	//	return Promise.reject("Not implemented.");
+		let values = Array.from(this.dataSets.values());
+		return new Promise<InsightDataset[]>(function (resolve, reject) {
+			resolve(values);
+		});
+	}
+
+	private saveToLocal(id: string, data: any) {
+		this.dataSetsIDs.push(id);
+		let insightDataSet = {
+			id,
+			data
+		};
+		this.dataSets.set(id, insightDataSet);
+	}
+
+	private removeFromLocal(id: string){
+		this.dataSetsIDs = this.dataSetsIDs.filter((string) => string !== id);
+		this.dataSets.delete(id);
 	}
 
 }

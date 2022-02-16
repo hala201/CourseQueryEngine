@@ -356,8 +356,8 @@ describe("InsightFacade", function () {
 				);
 				expect(ids.length).to.equal(2);
 				expect(ids).to.deep.equal(["courses", "invalidCourses"]);
-
 				await insightFacade.removeDataset("courses");
+
 				const insightDatasets = await insightFacade.listDatasets();
 				expect(insightDatasets).to.deep.equal([
 					{
