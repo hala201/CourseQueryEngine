@@ -1,20 +1,30 @@
 const KEYS: Map<string, string> = new Map<string, string>([
-	["Audit", "audit"],
-	["Avg", "avg"],
-	["Course", "id"],
-	["Fail", "fail"],
-	["id", "uuid"],
-	["Pass", "pass"],
-	["Professor", "instructor"],
-	["Subject", "dept"],
-	["Title", "title"],
-	["Year", "year"],
+	["dept", "dept"],
+	["id", "id"],
+	["avg", "avg"],
+	["instructor", "instructor"],
+	["title", "title"],
+	["pass", "pass"],
+	["fail", "fail"],
+	["audit", "audit"],
+	["uuid", "uuid"],
+	["year", "year"]
+	// ["Audit", "audit"],
+	// ["Avg", "avg"],
+	// ["Course", "id"],
+	// ["Fail", "fail"],
+	// ["id", "uuid"],
+	// ["Pass", "pass"],
+	// ["Professor", "instructor"],
+	// ["Subject", "dept"],
+	// ["Title", "title"],
+	// ["Year", "year"],
 ]);
 
 function getListOfSections(sections: any[]): any[] {
 	let listOfSections: any[] = [];
 	sections.forEach((result) => {
-		result.result.forEach((section: any) => {
+		Object.keys(result).forEach((section: any) => {
 			listOfSections.push(section);
 		});
 	});
@@ -24,7 +34,7 @@ function getListOfSections(sections: any[]): any[] {
 export function processListOfSections(sections: any[], id: string): any[] {
 	let listOfSection = getListOfSections(sections);
 	let processedSections: any[] = [];
-	listOfSection.forEach((section) => {
+	sections.forEach((section) => {
 		let newSection: any = {};
 		Object.keys(section).forEach((key) => {
 			if (KEYS.has(key)) {
@@ -42,11 +52,12 @@ function processKeys(oldSection: any, newSection: any, key: string, id: string) 
 	 */
 	if (key === "id") {
 		newSection[id + "_" + KEYS.get(key)] = oldSection[key].toString();
-	} else if (key === "Section") {
-		newSection[id + "_" + KEYS.get("Year")] =
+	} else if (key === "uuid") {
+		newSection[id + "_" + KEYS.get("year")] =
 			oldSection[key] === "overall" ? 1900 : oldSection["year"];
 	} else if (key === "year") {
-		console.log("No Implemented");
+		newSection[id + "_" + KEYS.get("year")] =
+			oldSection[key] === "overall" ? 1900 : oldSection["year"];
 	} else {
 		newSection[id + "_" + KEYS.get(key)] = oldSection[key];
 	}
