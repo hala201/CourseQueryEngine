@@ -3,7 +3,7 @@ import {
 	InsightDataset,
 	InsightDatasetKind,
 	InsightError,
-	InsightResult,
+	InsightResult, NotFoundError,
 	ResultTooLargeError
 } from "./IInsightFacade";
 import IDChecker from "./dataSetUtils/IDChecker";
@@ -42,16 +42,24 @@ export default class InsightFacade implements IInsightFacade {
 
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 
-		// Check for valid id
 		const idChecker = new IDChecker();
 		const dataController = new DataController();
 
+		// Check for valid id
 		const improperID: boolean = idChecker.checkValidID(id);
 		if (improperID) {
 			return Promise.reject(new InsightError("Invalid ID"));
 		}
 
 		const loadedIDs: string[] = dataController.getDatasets();
+
+		// Validate disk and local parity
+		let onDiskNotLocalIDs: string[] = dataController.checkLocalDiskParity(this.dataSetsIDs);
+		for (let item in onDiskNotLocalIDs) {
+			let JSONData: object = dataController.parseDiskJSONData(item);
+			this.saveToLocal(id,JSONData);
+		}
+
 		const notUniqueID: boolean = idChecker.checkUniqueID(id, loadedIDs);
 		if (notUniqueID) {
 			return Promise.reject(new InsightError("Dataset with same ID exists"));
@@ -69,7 +77,6 @@ export default class InsightFacade implements IInsightFacade {
 		if (data.length === 0) {
 			return Promise.reject(new InsightError("Empty Dataset"));
 		}
-		// console.log(data);
 
 		// Store dataset to disk
 		try {
@@ -77,30 +84,40 @@ export default class InsightFacade implements IInsightFacade {
 		} catch (err) {
 			return Promise.reject(new InsightError("Error adding dataset"));
 		}
+
+		// Store dataset to local
 		let addedDatasets = dataController.getDatasets();
-		this.dataSetsIDs.push(id);
-		let insightDataSet = {
-			id,
-			data
-		};
-		this.dataSets.set(id, insightDataSet);
+		this.saveToLocal(id,data);
 		return Promise.resolve(addedDatasets);
 	}
 
 	public removeDataset(id: string): Promise<string> {
-		// return new Promise((resolve, reject) => {
-		// 	try {
-		// 		let returnedNum = deleteDataSetHelper(id, this.dirPath, this.dataSets, this.dataSetsIDs);
-		// 		if (returnedNum === 404) {
-		// 			return Promise.reject();
-		// 		} else {
-		// 			resolve("remove succeeded");
-		// 		}
-		// 	} catch (e) {
-		// 		return Promise.reject(e);
-		// 	}
-		// });
-		return Promise.reject("Not implemented.");
+		// Check for valid id
+		const idChecker = new IDChecker();
+		const dataController = new DataController();
+
+		const improperID: boolean = idChecker.checkValidID(id);
+		if (improperID) {
+			return Promise.reject(new InsightError("Invalid ID"));
+		}
+
+		const loadedIDs: string[] = dataController.getDatasets();
+		const uniqueID: boolean = !idChecker.checkUniqueID(id, loadedIDs);
+		if (uniqueID) {
+			return Promise.reject(new NotFoundError("Dataset with ID is not found"));
+		}
+
+		// Remove dataset from disk
+		try {
+			dataController.removeFromDisk(id);
+		} catch (err){
+			return Promise.reject("Error removing dataset from disk");
+		}
+
+		// Remove dataset from local
+		this.removeFromLocal(id);
+
+		return Promise.resolve(id);
 	}
 
 	public performQuery(query: unknown): Promise<InsightResult[]> {
@@ -123,4 +140,19 @@ export default class InsightFacade implements IInsightFacade {
 			resolve(values);
 		});
 	}
+
+	private saveToLocal(id: string, data: any) {
+		this.dataSetsIDs.push(id);
+		let insightDataSet = {
+			id,
+			data
+		};
+		this.dataSets.set(id, insightDataSet);
+	}
+
+	private removeFromLocal(id: string){
+		this.dataSetsIDs = this.dataSetsIDs.filter((string) => string !== id);
+		this.dataSets.delete(id);
+	}
+
 }

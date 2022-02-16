@@ -38,4 +38,42 @@ export default class DataController{
 		});
 		return files;
 	}
+
+	public checkLocalDiskParity(localDatasets: string[]): string[]{
+		let diskDatasets = this.getDatasets();
+
+		let onDiskNotLocalIDs: string[] = [];
+
+		// Convert to set for easier parsing
+		let localSetDatasets = new Set(localDatasets);
+
+		// add id that is on disk but not on local to array
+		for (let dataset in diskDatasets){
+			if (!localSetDatasets.has(dataset)) {
+				onDiskNotLocalIDs.push(dataset);
+			}
+		}
+
+		return onDiskNotLocalIDs;
+	}
+
+	public parseDiskJSONData(id: string): object{
+		let JSONData: object = {};
+		try{
+			JSONData = fs.readFileSync("./data/" +  id + ".json");
+		} catch (err){
+			console.log("Error with reading dataset on disk");
+			return JSONData;
+		}
+		return JSONData;
+	}
+
+	public removeFromDisk(id: string) {
+		try{
+			fs.unlinkSync("./data/" +  id + ".json");
+		} catch (err){
+			throw new Error();
+		}
+	}
+
 }

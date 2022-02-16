@@ -66,11 +66,6 @@ export default class ZipLoader{
 						year: result.year
 					};
 
-					// Check if any property is undefined
-					// if (Object.values(item).some((x) => x === undefined)){
-					// 	continue;
-					// }
-
 					itemArray.push(item);
 				}
 			} catch {
