@@ -32,7 +32,7 @@ function getListOfSections(sections: any[]): any[] {
 }
 
 export function processListOfSections(sections: any[], id: string): any[] {
-	let listOfSection = getListOfSections(sections);
+	let listOfSections = getListOfSections(sections);
 	let processedSections: any[] = [];
 	sections.forEach((section) => {
 		let newSection: any = {};
@@ -53,8 +53,8 @@ function processKeys(oldSection: any, newSection: any, key: string, id: string) 
 	if (key === "id") {
 		newSection[id + "_" + KEYS.get(key)] = oldSection[key].toString();
 	} else if (key === "uuid") {
-		newSection[id + "_" + KEYS.get("year")] =
-			oldSection[key] === "overall" ? 1900 : oldSection["year"];
+		newSection[id + "_" + KEYS.get("uuid")] =
+			oldSection[key] === "overall" ? 1900 : oldSection["uuid"].toString();
 	} else if (key === "year") {
 		newSection[id + "_" + KEYS.get("year")] =
 			oldSection[key] === "overall" ? 1900 : oldSection["year"];

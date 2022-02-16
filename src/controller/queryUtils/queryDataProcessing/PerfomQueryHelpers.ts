@@ -18,7 +18,7 @@ export function performQueryHelper(
 		return insightResult.data;
 	}
 	let processedSectionsList = processListOfSections(insightResult.data, id);
-	let columnsToProcess = columnsReferencedInQuery(query);
+//	let columnsToProcess = columnsReferencedInQuery(query);
 	/**
 	 * Todo: This method will then sort the result according to the order if it exists
 	 */
