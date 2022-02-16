@@ -8,6 +8,8 @@ export default class ZipLoader{
 		let dataset: any[];
 		dataset = [];
 
+// comment
+
 		// Calls to JSZip API
 		const zipContent = new JSZip();
 		return new Promise((resolve, reject) => {
