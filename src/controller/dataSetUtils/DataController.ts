@@ -42,13 +42,13 @@ export default class DataController{
 	public checkLocalDiskParity(localDatasets: string[]): string[]{
 		let diskDatasets = this.getDatasets();
 
-		let onDiskNotLocalIDs: string[] = [];
+		let onDiskNotLocalIDs: any[] = [];
 
 		// Convert to set for easier parsing
 		let localSetDatasets = new Set(localDatasets);
 
 		// add id that is on disk but not on local to array
-		for (let dataset in diskDatasets){
+		for (let dataset of diskDatasets){
 			if (!localSetDatasets.has(dataset)) {
 				onDiskNotLocalIDs.push(dataset);
 			}
@@ -62,7 +62,7 @@ export default class DataController{
 		try{
 			JSONData = fs.readFileSync("./data/" +  id + ".json");
 		} catch (err){
-			console.log("Error with reading dataset on disk");
+			console.log("Error with reading dataset on disk. Error: \n" + err);
 			return JSONData;
 		}
 		return JSONData;
