@@ -17,11 +17,11 @@
 	},
 	"devDependencies": {
 		"@tsconfig/node16": "1.0.2",
-		"@types/chai": "4.3.0",
+		"@types/chai": "^4.3.0",
 		"@types/chai-as-promised": "7.1.4",
 		"@types/express": "4.17.13",
 		"@types/fs-extra": "9.0.13",
-		"@types/mocha": "9.0.0",
+		"@types/mocha": "^9.1.0",
 		"@types/node": "16.11.7",
 		"@types/parse5": "6.0.3",
 		"@typescript-eslint/eslint-plugin": "5.9.0",
