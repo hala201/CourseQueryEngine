@@ -134,11 +134,17 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
-	//	return Promise.reject("Not implemented.");
-		let values = Array.from(this.dataSets.values());
-		return new Promise<InsightDataset[]>(function (resolve, reject) {
-			resolve(values);
-		});
+		let returnArray: any[] = [];
+		for (let dataID of this.dataSetsIDs) {
+			let numRows = this.dataSets.get(dataID).data.length;
+			let dataObject = {
+				id: dataID,
+				kind: InsightDatasetKind.Courses,
+				numRows: numRows,
+			};
+			returnArray.push(dataObject);
+		}
+		return Promise.resolve(returnArray);
 	}
 
 	private saveToLocal(id: string, data: any) {
