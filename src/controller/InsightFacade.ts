@@ -10,7 +10,6 @@ import IDChecker from "./dataSetUtils/IDChecker";
 import ZipLoader from "./dataSetUtils/ZipLoader";
 import DataController from "./dataSetUtils/DataController";
 import {performQueryHelper} from "./queryUtils/queryDataProcessing/PerfomQueryHelpers";
-import {deleteDataSetHelper} from "./dataSetUtils/removeDataSetHelper";
 
 
 /**
@@ -21,7 +20,7 @@ import {deleteDataSetHelper} from "./dataSetUtils/removeDataSetHelper";
 export default class InsightFacade implements IInsightFacade {
 	private dataSets: Map<string, any>;
 	private dataSetsIDs: string[];
-	private dirPath: string = __dirname + "/data/";
+	// private dirPath: string = __dirname + "/data/";
 	private idChecker;
 	private dataController;
 
