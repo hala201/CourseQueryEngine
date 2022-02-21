@@ -10,7 +10,6 @@ import IDChecker from "./dataSetUtils/IDChecker";
 import ZipLoader from "./dataSetUtils/ZipLoader";
 import DataController from "./dataSetUtils/DataController";
 import {performQueryHelper} from "./queryUtils/queryDataProcessing/PerfomQueryHelpers";
-import {deleteDataSetHelper} from "./dataSetUtils/removeDataSetHelper";
 
 
 /**
@@ -21,7 +20,9 @@ import {deleteDataSetHelper} from "./dataSetUtils/removeDataSetHelper";
 export default class InsightFacade implements IInsightFacade {
 	private dataSets: Map<string, any>;
 	private dataSetsIDs: string[];
-	private dirPath: string = __dirname + "/data/";
+	// private dirPath: string = __dirname + "/data/";
+	private idChecker;
+	private dataController;
 
 	constructor() {
 		/**
@@ -38,29 +39,25 @@ export default class InsightFacade implements IInsightFacade {
 		 */
 		this.dataSetsIDs = [];
 
+		this.idChecker = new IDChecker();
+		this.dataController = new DataController();
+
+		// Validate disk and local parity
+		this.validateParity();
+
 	}
 
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 
-		const idChecker = new IDChecker();
-		const dataController = new DataController();
-
 		// Check for valid id
-		const improperID: boolean = idChecker.checkValidID(id);
+		const improperID: boolean = this.idChecker.checkValidID(id);
 		if (improperID) {
 			return Promise.reject(new InsightError("Invalid ID"));
 		}
 
-		const loadedIDs: string[] = dataController.getDatasets();
+		const loadedIDs: string[] = this.dataController.getDatasets();
 
-		// Validate disk and local parity
-		let onDiskNotLocalIDs: string[] = dataController.checkLocalDiskParity(this.dataSetsIDs);
-		for (let item in onDiskNotLocalIDs) {
-			let JSONData: object = dataController.parseDiskJSONData(item);
-			this.saveToLocal(id,JSONData);
-		}
-
-		const notUniqueID: boolean = idChecker.checkUniqueID(id, loadedIDs);
+		const notUniqueID: boolean = this.idChecker.checkUniqueID(id, loadedIDs);
 		if (notUniqueID) {
 			return Promise.reject(new InsightError("Dataset with same ID exists"));
 		}
@@ -80,36 +77,34 @@ export default class InsightFacade implements IInsightFacade {
 
 		// Store dataset to disk
 		try {
-			await dataController.saveToDisk(content, data, id);
+			await this.dataController.saveToDisk(content, data, id);
 		} catch (err) {
 			return Promise.reject(new InsightError("Error adding dataset"));
 		}
 
 		// Store dataset to local
-		let addedDatasets = dataController.getDatasets();
+		let addedDatasets = this.dataController.getDatasets();
 		this.saveToLocal(id,data);
 		return Promise.resolve(addedDatasets);
 	}
 
 	public removeDataset(id: string): Promise<string> {
 		// Check for valid id
-		const idChecker = new IDChecker();
-		const dataController = new DataController();
 
-		const improperID: boolean = idChecker.checkValidID(id);
+		const improperID: boolean = this.idChecker.checkValidID(id);
 		if (improperID) {
 			return Promise.reject(new InsightError("Invalid ID"));
 		}
 
-		const loadedIDs: string[] = dataController.getDatasets();
-		const uniqueID: boolean = !idChecker.checkUniqueID(id, loadedIDs);
+		const loadedIDs: string[] = this.dataController.getDatasets();
+		const uniqueID: boolean = !this.idChecker.checkUniqueID(id, loadedIDs);
 		if (uniqueID) {
 			return Promise.reject(new NotFoundError("Dataset with ID is not found"));
 		}
 
 		// Remove dataset from disk
 		try {
-			dataController.removeFromDisk(id);
+			this.dataController.removeFromDisk(id);
 		} catch (err){
 			return Promise.reject("Error removing dataset from disk");
 		}
@@ -159,6 +154,14 @@ export default class InsightFacade implements IInsightFacade {
 	private removeFromLocal(id: string){
 		this.dataSetsIDs = this.dataSetsIDs.filter((string) => string !== id);
 		this.dataSets.delete(id);
+	}
+
+	private validateParity(){
+		let onDiskNotLocalIDs: string[] = this.dataController.checkLocalDiskParity(this.dataSetsIDs);
+		for (let item in onDiskNotLocalIDs) {
+			let JSONData: object = this.dataController.parseDiskJSONData(item);
+			this.saveToLocal(item,JSONData);
+		}
 	}
 
 }
