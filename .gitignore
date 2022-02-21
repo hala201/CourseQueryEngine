@@ -13,6 +13,9 @@ dist/
 # Persist Dir
 data/
 
+# Resources arhcive
+test/resources/archives/courses/
+
 # Normal Things
 .DS_Store
 .env
