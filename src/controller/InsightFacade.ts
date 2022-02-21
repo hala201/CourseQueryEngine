@@ -43,6 +43,9 @@ export default class InsightFacade implements IInsightFacade {
 		this.idChecker = new IDChecker();
 		this.dataController = new DataController();
 
+		// Validate disk and local parity
+		this.validateParity();
+
 	}
 
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -54,13 +57,6 @@ export default class InsightFacade implements IInsightFacade {
 		}
 
 		const loadedIDs: string[] = this.dataController.getDatasets();
-
-		// Validate disk and local parity
-		let onDiskNotLocalIDs: string[] = this.dataController.checkLocalDiskParity(this.dataSetsIDs);
-		for (let item in onDiskNotLocalIDs) {
-			let JSONData: object = this.dataController.parseDiskJSONData(item);
-			this.saveToLocal(id,JSONData);
-		}
 
 		const notUniqueID: boolean = this.idChecker.checkUniqueID(id, loadedIDs);
 		if (notUniqueID) {
@@ -159,6 +155,14 @@ export default class InsightFacade implements IInsightFacade {
 	private removeFromLocal(id: string){
 		this.dataSetsIDs = this.dataSetsIDs.filter((string) => string !== id);
 		this.dataSets.delete(id);
+	}
+
+	private validateParity(){
+		let onDiskNotLocalIDs: string[] = this.dataController.checkLocalDiskParity(this.dataSetsIDs);
+		for (let item in onDiskNotLocalIDs) {
+			let JSONData: object = this.dataController.parseDiskJSONData(item);
+			this.saveToLocal(item,JSONData);
+		}
 	}
 
 }
