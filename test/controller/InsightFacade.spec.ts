@@ -387,7 +387,9 @@ describe("InsightFacade", function () {
 
 		it("test add room dataset with empty id", async function () {
 			try {
-				await insightFacade.addDataset(" ", datasetContents.get("courses") ?? "", InsightDatasetKind.Rooms);
+				await insightFacade.addDataset(" ",
+					datasetContents.get("courses") ?? "",
+					InsightDatasetKind.Rooms);
 				expect.fail("Added a dataset with rooms, should reject");
 			} catch (e) {
 				expect(e).to.be.instanceOf(InsightError);
@@ -668,7 +670,9 @@ describe("InsightFacade", function () {
 		});
 
 		it("should list one course dataset", async function () {
-			await insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses);
+			await insightFacade.addDataset("courses",
+				datasetContents.get("courses") ?? "",
+				InsightDatasetKind.Courses);
 			const insightDatasets = await insightFacade.listDatasets();
 
 			expect(insightDatasets).to.deep.equal([
@@ -681,7 +685,9 @@ describe("InsightFacade", function () {
 		});
 
 		it ("should list one room dataset", async function() {
-			await insightFacade.addDataset("rooms", datasetContents.get("roomsLSCLSK") ?? "", InsightDatasetKind.Rooms);
+			await insightFacade.addDataset("rooms",
+				datasetContents.get("roomsLSCLSK") ?? "",
+				InsightDatasetKind.Rooms);
 			const insightDatasets = await insightFacade.listDatasets();
 
 			expect(insightDatasets).to.deep.equal([
@@ -694,7 +700,9 @@ describe("InsightFacade", function () {
 		});
 
 		it("should list multiple course datasets", async function () {
-			await insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses);
+			await insightFacade.addDataset("courses",
+				datasetContents.get("courses") ?? "",
+				InsightDatasetKind.Courses);
 			await insightFacade.addDataset(
 				"courses-2",
 				datasetContents.get("courses") ?? "",
@@ -716,7 +724,9 @@ describe("InsightFacade", function () {
 		});
 
 		it ("should list multiple room datasets", async function() {
-			await insightFacade.addDataset("rooms", datasetContents.get("roomsLSCLSK") ?? "", InsightDatasetKind.Rooms);
+			await insightFacade.addDataset("rooms",
+				datasetContents.get("roomsLSCLSK") ?? "",
+				InsightDatasetKind.Rooms);
 			await insightFacade.addDataset(
 				"rooms-2",
 				datasetContents.get("roomMATHMATX") ?? "",
@@ -738,7 +748,9 @@ describe("InsightFacade", function () {
 		});
 
 		it ("should list multiple datasets of mixed kind", async function() {
-			await insightFacade.addDataset("rooms", datasetContents.get("roomMATHMATX") ?? "", InsightDatasetKind.Rooms);
+			await insightFacade.addDataset("rooms",
+				datasetContents.get("roomMATHMATX") ?? "",
+				InsightDatasetKind.Rooms);
 			await insightFacade.addDataset(
 				"courses",
 				datasetContents.get("courses") ?? "",
@@ -776,7 +788,9 @@ describe("InsightFacade", function () {
 			// Load the datasets specified in datasetsToQuery and add them to InsightFacade.
 			// Will *fail* if there is a problem reading ANY dataset.
 			const loadDatasetPromises = [
-				insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses),
+				insightFacade.addDataset("courses",
+					datasetContents.get("courses") ?? "",
+					InsightDatasetKind.Courses),
 			];
 
 			return Promise.all(loadDatasetPromises).catch((e) => {
