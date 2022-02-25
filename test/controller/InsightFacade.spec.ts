@@ -33,6 +33,7 @@ describe("InsightFacade", function () {
 		rooms: "./test/resources/archives/rooms.zip",
 		roomsNoIndex: "./test/resources/archives/roomsNoIndex.zip",
 		roomsNoRooms: "./test/resources/archives/roomsNoRooms.zip",
+		roomsLSCLSK: "./test/resources/archives/roomsLSCLSK.zip",
 	};
 
 	before(function () {
@@ -598,7 +599,7 @@ describe("InsightFacade", function () {
 				);
 				let ids = await insightFacade.addDataset(
 					"rooms-2",
-					datasetContents.get("rooms") ?? "",
+					datasetContents.get("roomsLSCLSK") ?? "",
 					InsightDatasetKind.Rooms
 				);
 				expect(ids.length).to.equal(2);
@@ -610,7 +611,7 @@ describe("InsightFacade", function () {
 					{
 						id: "rooms-2",
 						kind: InsightDatasetKind.Rooms,
-						numRows: 1, // TODO figure out how many rows there are
+						numRows: 7,
 					},
 				]);
 
@@ -679,14 +680,14 @@ describe("InsightFacade", function () {
 		});
 
 		it ("should list one room dataset", async function() {
-			await insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? "", InsightDatasetKind.Rooms);
+			await insightFacade.addDataset("rooms", datasetContents.get("roomsLSCLSK") ?? "", InsightDatasetKind.Rooms);
 			const insightDatasets = await insightFacade.listDatasets();
 
 			expect(insightDatasets).to.deep.equal([
 				{
 					id: "rooms",
 					kind: InsightDatasetKind.Rooms,
-					numRows: 1, // TODO figure out how many rows there are
+					numRows: 7,
 				},
 			]);
 		});
@@ -714,10 +715,10 @@ describe("InsightFacade", function () {
 		});
 
 		it ("should list multiple room datasets", async function() {
-			await insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? "", InsightDatasetKind.Rooms);
+			await insightFacade.addDataset("rooms", datasetContents.get("roomsLSCLSK") ?? "", InsightDatasetKind.Rooms);
 			await insightFacade.addDataset(
 				"rooms-2",
-				datasetContents.get("rooms") ?? "",
+				datasetContents.get("roomsLSCLSK") ?? "",
 				InsightDatasetKind.Rooms
 			);
 			const insightDatasets = await insightFacade.listDatasets();
@@ -725,18 +726,18 @@ describe("InsightFacade", function () {
 				{
 					id: "rooms",
 					kind: InsightDatasetKind.Rooms,
-					numRows: 1, // TODO figure out how many rows there are
+					numRows: 7,
 				},
 				{
 					id: "rooms-2",
 					kind: InsightDatasetKind.Rooms,
-					numRows: 1, // TODO figure out how many rows there are
+					numRows: 7,
 				},
 			]);
 		});
 
 		it ("should list multiple datasets of mixed kind", async function() {
-			await insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? "", InsightDatasetKind.Rooms);
+			await insightFacade.addDataset("rooms", datasetContents.get("roomsLSCLSK") ?? "", InsightDatasetKind.Rooms);
 			await insightFacade.addDataset(
 				"courses",
 				datasetContents.get("courses") ?? "",
@@ -747,7 +748,7 @@ describe("InsightFacade", function () {
 				{
 					id: "rooms",
 					kind: InsightDatasetKind.Rooms,
-					numRows: 1, // TODO figure out how many rows there are
+					numRows: 7
 				},
 				{
 					id: "courses",
