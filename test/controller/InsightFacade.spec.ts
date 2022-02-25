@@ -391,7 +391,7 @@ describe("InsightFacade", function () {
 
 		it ("should remove a room dataset", async function() {
 			// TODO
-		})
+		});
 
 		it("add two and remove two course datasets", async function () {
 			try {
@@ -428,7 +428,7 @@ describe("InsightFacade", function () {
 
 		it ("add two and remove two room datasets", async function() {
 			// TODO
-		})
+		});
 
 		it("remove a dataset that does not exist", async function () {
 			try {
@@ -487,8 +487,17 @@ describe("InsightFacade", function () {
 		});
 
 		it ("should list one room dataset", async function() {
-			// TODO
-		})
+			await insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? "", InsightDatasetKind.Rooms);
+			const insightDatasets = await insightFacade.listDatasets();
+
+			expect(insightDatasets).to.deep.equal([
+				{
+					id: "rooms",
+					kind: InsightDatasetKind.Rooms,
+					numRows: 1, //TODO figure out how many rows there are
+				},
+			]);
+		});
 
 		it("should list multiple course datasets", async function () {
 			await insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses);
@@ -513,12 +522,48 @@ describe("InsightFacade", function () {
 		});
 
 		it ("should list multiple room datasets", async function() {
-			// TODO
-		})
+			await insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? "", InsightDatasetKind.Rooms);
+			await insightFacade.addDataset(
+				"rooms-2",
+				datasetContents.get("rooms") ?? "",
+				InsightDatasetKind.Rooms
+			);
+			const insightDatasets = await insightFacade.listDatasets();
+			expect(insightDatasets).to.deep.equal([
+				{
+					id: "rooms",
+					kind: InsightDatasetKind.Rooms,
+					numRows: 1, //TODO figure out how many rows there are
+				},
+				{
+					id: "rooms-2",
+					kind: InsightDatasetKind.Rooms,
+					numRows: 1, //TODO figure out how many rows there are
+				},
+			]);
+		});
 
 		it ("should list multiple datasets of mixed kind", async function() {
-			// TODO
-		})
+			await insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? "", InsightDatasetKind.Rooms);
+			await insightFacade.addDataset(
+				"courses",
+				datasetContents.get("courses") ?? "",
+				InsightDatasetKind.Courses
+			);
+			const insightDatasets = await insightFacade.listDatasets();
+			expect(insightDatasets).to.deep.equal([
+				{
+					id: "rooms",
+					kind: InsightDatasetKind.Rooms,
+					numRows: 1, //TODO figure out how many rows there are
+				},
+				{
+					id: "courses",
+					kind: InsightDatasetKind.Courses,
+					numRows: 64612,
+				},
+			]);
+		});
 
 
 	});
