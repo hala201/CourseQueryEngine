@@ -297,44 +297,87 @@ describe("InsightFacade", function () {
 		});
 
 		it("test add a valid room dataset", async function () {
-			// TODO
+			const id: string = "rooms";
+			const content: string = datasetContents.get("rooms") ?? "";
+			const expected: string[] = [id];
+			return insightFacade.addDataset(id, content, InsightDatasetKind.Rooms).then((result: string[]) => {
+				expect(result).to.deep.equal(expected);
+			});
+		});
+
+		it("test add two valid room datasets", async function () {
 			try {
 				await insightFacade.addDataset(
-					"courses",
-					datasetContents.get("courses") ?? "",
+					"rooms",
+					datasetContents.get("rooms") ?? "",
 					InsightDatasetKind.Rooms
 				);
-				expect.fail("Added a dataset with rooms, should reject");
+				let ids = await insightFacade.addDataset(
+					"rooms-2",
+					datasetContents.get("rooms") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect(ids.length).to.equal(2);
+				expect(ids).to.deep.equal(["rooms", "rooms-2"]);
+			} catch (e) {
+				expect.fail("Should not throw an exception");
+			}
+		});
+
+		it("test add room dataset with whitespace id", async function () {
+			let ids;
+			try {
+				ids = await insightFacade.addDataset(
+					" ",
+					datasetContents.get("rooms") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect.fail("Added a room dataset with whitespace id, should reject");
 			} catch (e) {
 				expect(e).to.be.instanceOf(InsightError);
 			}
 		});
 
-		it("test add two valid room datasets", async function () {
-			// TODO
-		});
-
-		it("test add room dataset with whitespace id", async function () {
-			// TODO
-		});
-
 		it("test add room dataset with whitespace in the id string", async function () {
-			// TODO
+			let ids;
+			try {
+				ids = await insightFacade.addDataset(
+					" rooms ",
+					datasetContents.get("rooms") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect.fail("Added a room dataset with whitespace id, should reject");
+			} catch (e) {
+				expect(e).to.be.instanceOf(InsightError);
+			}
 		});
 
 		it("test add room dataset with whitespace id and content", async function () {
-			// TODO
+			try {
+				const ids = await insightFacade.addDataset(" ", " ", InsightDatasetKind.Rooms);
+				expect.fail("Added a room dataset with white space id, should reject");
+			} catch (e) {
+				expect(e).to.be.instanceOf(InsightError);
+			}
 		});
 
 		it("test add room dataset with underscore id", async function () {
-			// TODO
+			try {
+				const ids = await insightFacade.addDataset(
+					"rooms_rooms",
+					datasetContents.get("emptyContent") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect.fail("Added a room dataset with underscore id, should reject");
+			} catch (e) {
+				expect(e).to.be.instanceOf(InsightError);
+			}
 		});
 
 		it("test add room dataset with empty content", async function () {
-			// TODO
 			try {
-				await insightFacade.addDataset("courses", " ", InsightDatasetKind.Rooms);
-				expect.fail("Added a dataset with rooms, should reject");
+				const ids = await insightFacade.addDataset("rooms", "", InsightDatasetKind.Rooms);
+				expect.fail("Added empty string for room dataset content, should reject");
 			} catch (e) {
 				expect(e).to.be.instanceOf(InsightError);
 			}
@@ -351,23 +394,130 @@ describe("InsightFacade", function () {
 
 
 		it("test add room dataset with already existing id", async function () {
-			// TODO
+			try {
+				let ids;
+				ids = await insightFacade.addDataset(
+					"rooms",
+					datasetContents.get("rooms") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect(ids).to.deep.equal(["rooms"]);
+			} catch (e) {
+				expect.fail("Should not throw an error");
+			}
+
+			try {
+				await insightFacade.addDataset(
+					"rooms",
+					datasetContents.get("rooms") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect.fail("Added a dataset with existing id, should reject");
+			} catch (e) {
+				expect(e).to.be.instanceOf(InsightError);
+			}
 		});
 
 		it("test add course dataset with already existing room dataset with same id", async function () {
-			// TODO
+			try {
+				let ids;
+				ids = await insightFacade.addDataset(
+					"test",
+					datasetContents.get("rooms") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect(ids).to.deep.equal(["rooms"]);
+			} catch (e) {
+				expect.fail("Should not throw an error");
+			}
+
+			try {
+				await insightFacade.addDataset(
+					"test",
+					datasetContents.get("courses") ?? "",
+					InsightDatasetKind.Courses
+				);
+				expect.fail("Added a dataset with existing id, should reject");
+			} catch (e) {
+				expect(e).to.be.instanceOf(InsightError);
+			}
 		});
 
 		it("test add room dataset with already existing course dataset with same id", async function () {
-			// TODO
+			try {
+				let ids;
+				ids = await insightFacade.addDataset(
+					"test",
+					datasetContents.get("courses") ?? "",
+					InsightDatasetKind.Courses
+				);
+				expect(ids).to.deep.equal(["rooms"]);
+			} catch (e) {
+				expect.fail("Should not throw an error");
+			}
+
+			try {
+				await insightFacade.addDataset(
+					"test",
+					datasetContents.get("rooms") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect.fail("Added a dataset with existing id, should reject");
+			} catch (e) {
+				expect(e).to.be.instanceOf(InsightError);
+			}
 		});
 
 		it("test add room dataset with no index.htm", async function () {
-			// TODO
+			try {
+				await insightFacade.addDataset(
+					"rooms",
+					datasetContents.get("roomsNoIndex") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect.fail("Added a room dataset with no index.htm");
+			} catch (e) {
+				expect(e).to.be.instanceOf(InsightError);
+			}
 		});
 
 		it("test add room dataset with no rooms", async function () {
-			// TODO
+			try {
+				await insightFacade.addDataset(
+					"rooms",
+					datasetContents.get("roomsNoRooms") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect.fail("Added a room dataset with no rooms");
+			} catch (e) {
+				expect(e).to.be.instanceOf(InsightError);
+			}
+		});
+
+		it("test add room dataset with courses kind", async function () {
+			try {
+				await insightFacade.addDataset(
+					"rooms",
+					datasetContents.get("rooms") ?? "",
+					InsightDatasetKind.Courses
+				);
+				expect.fail("Added a room dataset but kind was courses");
+			} catch (e) {
+				expect(e).to.be.instanceOf(InsightError);
+			}
+		});
+
+		it("test add courses dataset with rooms type", async function () {
+			try {
+				await insightFacade.addDataset(
+					"courses",
+					datasetContents.get("courses") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect.fail("Added a courses dataset but kind was rooms");
+			} catch (e) {
+				expect(e).to.be.instanceOf(InsightError);
+			}
 		});
 
 		// TEST Remove Dataset
