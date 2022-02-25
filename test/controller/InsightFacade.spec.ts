@@ -29,6 +29,10 @@ describe("InsightFacade", function () {
 		multipleDataset: "./test/resources/archives/multipleDataSets.zip",
 		invalidCourseDirectory: "./test/resources/archives/InvalidCoursesDirectory.zip",
 		nonZip: "./test/resources/archives/nonZip.txt",
+
+		rooms: "./test/resources/archives/rooms.zip",
+		roomsNoIndex: "./test/resources/archives/roomsNoIndex.zip",
+		roomsNoRooms: "./test/resources/archives/roomsNoRooms.zip",
 	};
 
 	before(function () {
@@ -74,7 +78,7 @@ describe("InsightFacade", function () {
 			});
 		});
 
-		it("test add an invalid dataset directory", async function () {
+		it("test add an invalid course dataset directory", async function () {
 			try {
 				let ids = await insightFacade.addDataset(
 					"courses",
@@ -292,7 +296,7 @@ describe("InsightFacade", function () {
 			}
 		});
 
-		it("test add room dataset", async function () {
+		it("test add a valid room dataset", async function () {
 			// TODO
 			try {
 				await insightFacade.addDataset(
@@ -304,6 +308,26 @@ describe("InsightFacade", function () {
 			} catch (e) {
 				expect(e).to.be.instanceOf(InsightError);
 			}
+		});
+
+		it("test add two valid room datasets", async function () {
+			// TODO
+		});
+
+		it("test add room dataset with whitespace id", async function () {
+			// TODO
+		});
+
+		it("test add room dataset with whitespace in the id string", async function () {
+			// TODO
+		});
+
+		it("test add room dataset with whitespace id and content", async function () {
+			// TODO
+		});
+
+		it("test add room dataset with underscore id", async function () {
+			// TODO
 		});
 
 		it("test add room dataset with empty content", async function () {
@@ -325,6 +349,27 @@ describe("InsightFacade", function () {
 			}
 		});
 
+
+		it("test add room dataset with already existing id", async function () {
+			// TODO
+		});
+
+		it("test add course dataset with already existing room dataset with same id", async function () {
+			// TODO
+		});
+
+		it("test add room dataset with already existing course dataset with same id", async function () {
+			// TODO
+		});
+
+		it("test add room dataset with no index.htm", async function () {
+			// TODO
+		});
+
+		it("test add room dataset with no rooms", async function () {
+			// TODO
+		});
+
 		// TEST Remove Dataset
 
 		it("remove a course dataset", async function () {
@@ -343,6 +388,10 @@ describe("InsightFacade", function () {
 				expect.fail("Should not throw an error");
 			}
 		});
+
+		it ("should remove a room dataset", async function() {
+			// TODO
+		})
 
 		it("add two and remove two course datasets", async function () {
 			try {
@@ -377,7 +426,11 @@ describe("InsightFacade", function () {
 			}
 		});
 
-		it("remove a course dataset that does not exist", async function () {
+		it ("add two and remove two room datasets", async function() {
+			// TODO
+		})
+
+		it("remove a dataset that does not exist", async function () {
 			try {
 				await insightFacade.removeDataset("nonexistentcourses");
 				expect.fail("removed a dataset that does not exist, should reject");
@@ -386,7 +439,7 @@ describe("InsightFacade", function () {
 			}
 		});
 
-		it("remove a course dataset with a whitespaces id", async function () {
+		it("remove a dataset with a whitespaces id", async function () {
 			try {
 				await insightFacade.removeDataset(" ");
 				expect.fail("removed a dataset with a whitespace id");
@@ -395,7 +448,7 @@ describe("InsightFacade", function () {
 			}
 		});
 
-		it("remove a course dataset with an empty id", async function () {
+		it("remove a dataset with an empty id", async function () {
 			try {
 				await insightFacade.removeDataset("");
 				expect.fail("removed a dataset with a whitespace id");
@@ -404,7 +457,7 @@ describe("InsightFacade", function () {
 			}
 		});
 
-		it("remove a course dataset with an underscore id", async function () {
+		it("remove a dataset with an underscore id", async function () {
 			try {
 				await insightFacade.removeDataset("_courses_");
 				expect.fail("removed a dataset with id that contains underscore");
@@ -420,7 +473,7 @@ describe("InsightFacade", function () {
 			expect(insightDatasets).to.deep.equal([]);
 		});
 
-		it("should list one dataset", async function () {
+		it("should list one course dataset", async function () {
 			await insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses);
 			const insightDatasets = await insightFacade.listDatasets();
 
@@ -433,7 +486,11 @@ describe("InsightFacade", function () {
 			]);
 		});
 
-		it("should list multiple datasets", async function () {
+		it ("should list one room dataset", async function() {
+			// TODO
+		})
+
+		it("should list multiple course datasets", async function () {
 			await insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses);
 			await insightFacade.addDataset(
 				"courses-2",
@@ -454,6 +511,16 @@ describe("InsightFacade", function () {
 				},
 			]);
 		});
+
+		it ("should list multiple room datasets", async function() {
+			// TODO
+		})
+
+		it ("should list multiple datasets of mixed kind", async function() {
+			// TODO
+		})
+
+
 	});
 
 	/*
