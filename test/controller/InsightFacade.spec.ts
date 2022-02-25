@@ -390,7 +390,20 @@ describe("InsightFacade", function () {
 		});
 
 		it ("should remove a room dataset", async function() {
-			// TODO
+			const id = "rooms";
+			const ids = await insightFacade.addDataset(
+				id,
+				datasetContents.get("rooms") ?? "",
+				InsightDatasetKind.Rooms
+			);
+			expect(ids).deep.equal([id]);
+			try {
+				await insightFacade.removeDataset(id);
+				const insightDatasets = await insightFacade.listDatasets();
+				expect(insightDatasets).to.deep.equal([]);
+			} catch (e) {
+				expect.fail("Should not throw an error");
+			}
 		});
 
 		it("add two and remove two course datasets", async function () {
@@ -427,7 +440,36 @@ describe("InsightFacade", function () {
 		});
 
 		it ("add two and remove two room datasets", async function() {
-			// TODO
+			try {
+				await insightFacade.addDataset(
+					"rooms",
+					datasetContents.get("rooms") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				let ids = await insightFacade.addDataset(
+					"rooms-2",
+					datasetContents.get("rooms") ?? "",
+					InsightDatasetKind.Rooms
+				);
+				expect(ids.length).to.equal(2);
+				expect(ids).to.deep.equal(["rooms", "rooms-2"]);
+				await insightFacade.removeDataset("rooms");
+
+				const insightDatasets = await insightFacade.listDatasets();
+				expect(insightDatasets).to.deep.equal([
+					{
+						id: "rooms-2",
+						kind: InsightDatasetKind.Rooms,
+						numRows: 1, // TODO figure out how many rows there are
+					},
+				]);
+
+				await insightFacade.removeDataset("invalidCourses");
+				const insightTwoDatasets = await insightFacade.listDatasets();
+				expect(insightTwoDatasets).to.deep.equal([]);
+			} catch (e) {
+				expect.fail("Should not throw an exception");
+			}
 		});
 
 		it("remove a dataset that does not exist", async function () {
@@ -494,7 +536,7 @@ describe("InsightFacade", function () {
 				{
 					id: "rooms",
 					kind: InsightDatasetKind.Rooms,
-					numRows: 1, //TODO figure out how many rows there are
+					numRows: 1, // TODO figure out how many rows there are
 				},
 			]);
 		});
@@ -533,12 +575,12 @@ describe("InsightFacade", function () {
 				{
 					id: "rooms",
 					kind: InsightDatasetKind.Rooms,
-					numRows: 1, //TODO figure out how many rows there are
+					numRows: 1, // TODO figure out how many rows there are
 				},
 				{
 					id: "rooms-2",
 					kind: InsightDatasetKind.Rooms,
-					numRows: 1, //TODO figure out how many rows there are
+					numRows: 1, // TODO figure out how many rows there are
 				},
 			]);
 		});
@@ -555,7 +597,7 @@ describe("InsightFacade", function () {
 				{
 					id: "rooms",
 					kind: InsightDatasetKind.Rooms,
-					numRows: 1, //TODO figure out how many rows there are
+					numRows: 1, // TODO figure out how many rows there are
 				},
 				{
 					id: "courses",
