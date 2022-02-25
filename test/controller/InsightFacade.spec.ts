@@ -34,6 +34,7 @@ describe("InsightFacade", function () {
 		roomsNoIndex: "./test/resources/archives/roomsNoIndex.zip",
 		roomsNoRooms: "./test/resources/archives/roomsNoRooms.zip",
 		roomsLSCLSK: "./test/resources/archives/roomsLSCLSK.zip",
+		roomsMATHMATX: "./test/resources/archives/roomsMATHMATX.zip",
 	};
 
 	before(function () {
@@ -718,7 +719,7 @@ describe("InsightFacade", function () {
 			await insightFacade.addDataset("rooms", datasetContents.get("roomsLSCLSK") ?? "", InsightDatasetKind.Rooms);
 			await insightFacade.addDataset(
 				"rooms-2",
-				datasetContents.get("roomsLSCLSK") ?? "",
+				datasetContents.get("roomMATHMATX") ?? "",
 				InsightDatasetKind.Rooms
 			);
 			const insightDatasets = await insightFacade.listDatasets();
@@ -731,13 +732,13 @@ describe("InsightFacade", function () {
 				{
 					id: "rooms-2",
 					kind: InsightDatasetKind.Rooms,
-					numRows: 7,
+					numRows: 9,
 				},
 			]);
 		});
 
 		it ("should list multiple datasets of mixed kind", async function() {
-			await insightFacade.addDataset("rooms", datasetContents.get("roomsLSCLSK") ?? "", InsightDatasetKind.Rooms);
+			await insightFacade.addDataset("rooms", datasetContents.get("roomMATHMATX") ?? "", InsightDatasetKind.Rooms);
 			await insightFacade.addDataset(
 				"courses",
 				datasetContents.get("courses") ?? "",
@@ -748,7 +749,7 @@ describe("InsightFacade", function () {
 				{
 					id: "rooms",
 					kind: InsightDatasetKind.Rooms,
-					numRows: 7
+					numRows: 9
 				},
 				{
 					id: "courses",
